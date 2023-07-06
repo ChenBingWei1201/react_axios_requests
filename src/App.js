@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import api from './api/posts';
 
 function App() {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [postTitle, setPostTitle] = useState('');
@@ -22,12 +22,14 @@ function App() {
   const [editBody, setEditBody] = useState('');
   const history = useHistory();
 
+  // fetching data with GET
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchPosts = async () => { // define fetch function
       try {
         const response = await api.get('/posts');
         setPosts(response.data);
-      } catch (err) {
+      } 
+      catch (err) {
         if (err.response) {
           // Not in the 200 response range 
           console.log(err.response.data);
@@ -42,6 +44,7 @@ function App() {
     fetchPosts();
   }, [])
 
+  // filter
   useEffect(() => {
     const filteredResults = posts.filter((post) =>
       ((post.body).toLowerCase()).includes(search.toLowerCase())
@@ -50,6 +53,7 @@ function App() {
     setSearchResults(filteredResults.reverse());
   }, [posts, search])
 
+  // posting data with POST
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
@@ -62,11 +66,13 @@ function App() {
       setPostTitle('');
       setPostBody('');
       history.push('/');
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(`Error: ${err.message}`);
     }
   }
 
+  // editting data with PUT
   const handleEdit = async (id) => {
     const datetime = format(new Date(), 'MMMM dd, yyyy pp');
     const updatedPost = { id, title: editTitle, datetime, body: editBody };
@@ -76,18 +82,21 @@ function App() {
       setEditTitle('');
       setEditBody('');
       history.push('/');
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(`Error: ${err.message}`);
     }
   }
 
+  // deleting data with DELETE
   const handleDelete = async (id) => {
     try {
       await api.delete(`/posts/${id}`);
       const postsList = posts.filter(post => post.id !== id);
       setPosts(postsList);
       history.push('/');
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(`Error: ${err.message}`);
     }
   }
